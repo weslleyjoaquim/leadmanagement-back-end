@@ -75,6 +75,9 @@ Crie um arquivo `appsettings.Development.json` na pasta `LeadManagement.API` com
    dotnet run --project LeadManagement.API
    ```
 
+4. Acesse a aplicação:
+   - Swagger UI: https://localhost:7229/swagger
+   - API: https://localhost:7229/api/v1/
 
 ## 🛠️ Estrutura do Projeto
 
