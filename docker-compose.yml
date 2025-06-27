@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  leadmanagement.api:
+    build:
+      context: .
+      dockerfile: LeadManagement.API/Dockerfile
+    container_name: leadmanagement-api
+    restart: unless-stopped
+    ports:
+      - "5000:80"
+      - "5001:443"
+    depends_on:
+      - sqlserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=master;User Id=sa;Password=SenhaForte123@;TrustServerCertificate=true;Trusted_Connection=False;
+    networks:
+      - leadmanagement-network
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=SenhaForte123@
+      - MSSQL_PID=Developer
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-Q", "SELECT 1"]
+      interval: 5s
+      retries: 10
+      start_period: 30s
+      timeout: 3s
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+      - ./docker/mssql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - leadmanagement-network
+
+networks:
+  leadmanagement-network:
+    driver: bridge
+
+volumes:
+  sqlserver-data:
